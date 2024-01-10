@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post Details</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+        }
+
+        #postDetails {
+            width: 100%;
+            max-width: 600px;
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        #postComments {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+
+        #postComments div {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 10px;
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+<div id="postDetails"></div>
+
+<h2>Comments</h2>
+<div id="postComments"></div>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const postId = urlParams.get('id');
+
+    fetch(`https://jsonplaceholder.typicode.com/posts/${postId}`)
+        .then(response => response.json())
+        .then(post => {
+            const postDetailsElement = document.getElementById('postDetails');
+            postDetailsElement.innerHTML = `<p>ID: ${post.id}</p>
+                                               <p>Title: ${post.title}</p>
+                                               <p>Body: ${post.body}</p>`;
+        })
+        .catch(error => console.error('Error fetching post details:', error));
+
+    fetch(`https://jsonplaceholder.typicode.com/posts/${postId}/comments`)
+        .then(response => response.json())
+        .then(comments => {
+            const postCommentsElement = document.getElementById('postComments');
+            postCommentsElement.innerHTML = '';
+
+            comments.forEach(comment => {
+                const commentBlock = document.createElement('div');
+                commentBlock.innerHTML = `<p>Name: ${comment.name}</p>
+                                              <p>Email: ${comment.email}</p>
+                                              <p>Body: ${comment.body}</p>`;
+
+                postCommentsElement.appendChild(commentBlock);
+            });
+        })
+        .catch(error => console.error('Error fetching post comments:', error));
+</script>
+</body>
+</html>
